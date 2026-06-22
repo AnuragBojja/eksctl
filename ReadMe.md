@@ -79,8 +79,8 @@ aws eks describe-cluster \
   --query "cluster.identity.oidc.issuer" \
   --output text
 ```
+#### Attach the LBC IAM Policy to the new role
 ```
-# Attach the LBC IAM Policy to the new role
 aws iam attach-role-policy \
   --role-name AmazonEKSLoadBalancerControllerRole \
   --policy-arn arn:aws:iam::<YOUR-AWS-ACCOUNT-ID>:policy/AWSLoadBalancerControllerIAMPolicy
