@@ -36,4 +36,22 @@ aws iam create-policy \
 ```
 ---
 4. Create a Kubernetes service account and associate it with the IAM policy created in the previous step. Use the following command to create the service account:
+use the following command to create the service account with aws-load-balancer-controller.yaml file in the current directory:
+```
+kubectl apply -f aws-load-balancer-controller.yaml
+```
+* dont forget to replace the placeholders in the aws-load-balancer-controller.yaml file with your actual values before applying the configuration.
+
+or
+
+use the following command to create the service account directly:
+```
+eksctl create iamserviceaccount \
+--cluster=<cluster-name> \
+--namespace=kube-system \
+--name=aws-load-balancer-controller \
+--attach-policy-arn=arn:aws:iam::<AWS_ACCOUNT_ID>:policy/AWSLoadBalancerControllerIAMPolicy \
+--override-existing-serviceaccounts \
+--region <region-code> \
+--approve
 ```
