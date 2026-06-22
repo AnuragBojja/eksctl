@@ -1,0 +1,13 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: roboshop-dev
+  region: us-east-1
+
+iam:
+  withOIDC: true
+
+
+## use this command to install the OIDC provider from file 
+## eksctl utils associate-iam-oidc-provider -f OIDC-provider.yaml --approve
