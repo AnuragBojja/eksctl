@@ -4,6 +4,10 @@ This module deploys an EKS cluster with the following features:
 
 ## installation of ingress controller
 
+### reference: 
+``` 
+https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/ 
+```
 
 1. Installation of OIDC Identity Provider for authentication
 
@@ -59,13 +63,13 @@ Below is the trust-policy.json file content:
     {
       "Effect": "Allow",
       "Principal": {
-        "Federated": "arn:aws:iam::<YOUR-AWS-ACCOUNT-ID>:oidc-provider/oidc.eks.<YOUR-REGION>://<YOUR-OIDC-PROVIDER-ID>"
+        "Federated": "arn:aws:iam::<your-aws-account-id>:oidc-provider/oidc.eks.us-east-1.<YOUR-OIDC-PROVIDER-ID>"
       },
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "oidc.eks.<YOUR-REGION>://<YOUR-OIDC-PROVIDER-ID>:aud": "://amazonaws.com",
-          "oidc.eks.<YOUR-REGION>://<YOUR-OIDC-PROVIDER-ID>:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
+          "oidc.eks.us-east-1.<YOUR-OIDC-PROVIDER-ID>:aud": "sts.amazonaws.com",
+          "oidc.eks.us-east-1.<YOUR-OIDC-PROVIDER-ID>:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
         }
       }
     }
@@ -97,4 +101,28 @@ eksctl create iamserviceaccount \
 --override-existing-serviceaccounts \
 --region <region-code> \
 --approve
+```
+---
+
+4. Add controller to cluster:
+### Install HELM
+```
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+#### Add the EKS Helm chart repository:
+```
+helm repo add eks https://aws.github.io/eks-charts
+```
+
+### Add the AWS Load Balancer Controller Helm chart repository:
+```
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=roboshop-dev --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller
+```
+* replace roboshop-dev with your actual cluster name in the above command.
+
+check the status of the controller:
+```
+kubectl get pod -n kube-system
 ```
